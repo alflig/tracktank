@@ -57,7 +57,7 @@ namespace WebApplication1
                 name = "";
                 while (reader.HasRows && reader.Read())
                 {
-                    name = reader.GetString(reader.GetOrdinal("username"));
+                    name = reader.GetString(reader.GetOrdinal("firstName")) + " " + reader.GetString(reader.GetOrdinal("lastName"));
                 }
 
                 if (reader.HasRows)

@@ -26,7 +26,7 @@ namespace WebApplication1
             conn = new MySql.Data.MySqlClient.MySqlConnection(connString);
             conn.Open();
             queryStr = "";
-            queryStr = "INSERT INTO webapplication1.registered_user (username, password)" + "VALUES('" + usernameTextBox.Text + "','" + passwordTextBox.Text + "')";
+            queryStr = "INSERT INTO webapplication1.registered_user (firstName, lastName, email, username, password)" + "VALUES('" + firstNameTextBox.Text + "', '" + lastNameTextBox.Text + "', '" + emailTextBox.Text + "','" + usernameTextBox.Text + "','" + passwordTextBox.Text + "')";
             cmd = new MySql.Data.MySqlClient.MySqlCommand(queryStr,conn);
             cmd.ExecuteReader();
             conn.Close();
