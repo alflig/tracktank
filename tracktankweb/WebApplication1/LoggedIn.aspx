@@ -4,10 +4,30 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Logged In</title>
+    <link rel="stylesheet" type="text/css" href="StyleSheet2.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
+    <title>Home</title>
 </head>
 <body>
-    <p>This is the logged in page</p>
+<header>
+        <script src="JavaScript1.js"></script>
+        <div class="menu-toggle" id="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="overlay"></div>
+        <div class="container">
+            <nav>
+                <h1 class="brand"><a href="LoggedIn.aspx">Track<span>Tank</span></a></h1>
+                <ul>
+                    <li><a href="LoggedIn.aspx">Home</a></li>
+                    <li><a href="registerAlbum.aspx">Services</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+ </header>
+       
     <form id="form1" runat="server">
         <div>
             <p>Welcome</p>
