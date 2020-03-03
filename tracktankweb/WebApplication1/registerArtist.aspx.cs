@@ -4,6 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.IO;
+using System.Data;
+using System.Configuration;
+using MySql.Data.MySqlClient;
+
 
 namespace WebApplication1
 {
@@ -14,7 +19,23 @@ namespace WebApplication1
         String queryStr;
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+            if (!Page.IsPostBack)
+            {
+                int year = DateTime.Now.Year;
+                for (int i = year - 200; i <= year + 0; i++)
+                {
+                    ListItem li = new ListItem(i.ToString());
+                    artistAge.Items.Add(li);
+                }
+                artistAge.Items.FindByText(year.ToString()).Selected = true;
+            }
+
+        }
+
+        protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Label1.Text = "you selected year<br />";
+            Label1.Text += artistAge.SelectedItem.Text;
         }
         protected void RegisterEventMethod(object sender, EventArgs e)
         {
@@ -22,15 +43,42 @@ namespace WebApplication1
         }
         private void RegisterUser()
         {
-            String connString = System.Configuration.ConfigurationManager.ConnectionStrings["WebApplication1ConnectionString"].ToString();
-            conn = new MySql.Data.MySqlClient.MySqlConnection(connString);
-            conn.Open();
-            queryStr = "";
-            queryStr = "INSERT INTO webapplication1.artist (name, country, age, bio, careerStart, careerEnd)" + "VALUES('" + artistName.Text + "', '" + artistCountry.Text + "', '" + age.Text + "','" + bio.Text + "','"  + careerStart.Text + "','" + end.Text + "')";
-            cmd = new MySql.Data.MySqlClient.MySqlCommand(queryStr, conn);
-            cmd.ExecuteReader();
-            conn.Close();
+            string filename = Path.GetFileName(FileUpload1.PostedFile.FileName);
+            string contentType = FileUpload1.PostedFile.ContentType;
+            using (Stream fs = FileUpload1.PostedFile.InputStream)
+            {
+                using (BinaryReader br = new BinaryReader(fs))
+                {
+                    byte[] bytes = br.ReadBytes((Int32)fs.Length);
+                    string constr = ConfigurationManager.ConnectionStrings["WebApplication1ConnectionString"].ConnectionString;
+                    using (MySqlConnection con = new MySqlConnection(constr))
+                    {
+                        string query = "INSERT INTO webapplication1.artist (name, country, age, bio, careerStart, careerEnd, FileName, ContentType, Content)" + "VALUES(@artistName, @artistCountry, @age, @bio, @careerStart, @end, @FileName, @ContentType, @Content)";
+
+                        using (MySqlCommand cmd = new MySqlCommand(query))
+                        {
+                            cmd.Connection = con;
+                            cmd.Parameters.AddWithValue("@artistName", artistName.Text);
+                            cmd.Parameters.AddWithValue("@artistCountry", artistCountry.Text);
+                            cmd.Parameters.AddWithValue("@age", artistAge.Text);
+                            cmd.Parameters.AddWithValue("@bio", bio.Text);
+                            cmd.Parameters.AddWithValue("@careerStart", careerStart.Text);
+                            cmd.Parameters.AddWithValue("@end", end.Text);
+                            cmd.Parameters.AddWithValue("@FileName", filename);
+                            cmd.Parameters.AddWithValue("@ContentType", contentType);
+                            cmd.Parameters.AddWithValue("@Content", bytes);
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                        }
+                    }
+                }
+            }
+            Response.Redirect(Request.Url.AbsoluteUri);
         }
+
+
+
 
         protected void Button1_Click(object sender, EventArgs e)
         {
@@ -47,5 +95,8 @@ namespace WebApplication1
         {
             end.Text = calendar2.SelectedDate.ToString("dd/MM/yyyy");
         }
+
+        
+
     }
 }
